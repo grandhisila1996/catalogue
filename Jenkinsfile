@@ -1,15 +1,18 @@
 #!groovy
 @Library('roboshop-shared-library') _
 
-// responsibility to pass what type of application and component is this to pipeline deicssion
-
+// Define component and application type
 def configMap = [
     application: "nodejsVM",
     component: "catalogue"
 ]
-if( ! env.BRANCH_NAME.equalsIgnoreCase('main')){
+
+// Ensure branch name is available and handle non-main branches
+def branch = env.BRANCH_NAME ?: env.GIT_BRANCH?.replaceAll('origin/', '') ?: 'unknown'
+echo "Triggered by branch: ${branch}"
+
+if (!branch.equalsIgnoreCase('main')) {
     pipelineDecission.decidePipeline(configMap)
-}
-else{
-    echo "This is PRODUCTION, deal with CR process"
+} else {
+    echo "This is PRODUCTION. Please follow the CR (Change Request) process."
 }
